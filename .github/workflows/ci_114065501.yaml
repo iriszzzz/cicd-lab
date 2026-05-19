@@ -1,0 +1,49 @@
+name: CI 114065501
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-114065501-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Prettier format check
+        run: npm run format:check
+
+      - name: Run tests and generate JUnit report
+        run: |
+          mkdir -p test-results
+          npm test -- --reporter=verbose --reporter=junit --outputFile=test-results/vitest-junit.xml
+
+      - name: Upload Vitest JUnit report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: vitest
+          path: test-results/vitest-junit.xml
+          reporter: junit
+          fail-on-error: false
