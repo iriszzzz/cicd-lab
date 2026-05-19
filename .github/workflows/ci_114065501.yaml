@@ -46,4 +46,5 @@ jobs:
           name: vitest
           path: test-results/vitest-junit.xml
           reporter: junit
-          fail-on-error: false
+          reporter: java-junit 
+          fail-on-error: true
