@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - '**'
+      
+permissions:
+  checks: write
+  contents: read
+  statuses: write
 
 concurrency:
   group: ci-114065501-${{ github.ref }}
